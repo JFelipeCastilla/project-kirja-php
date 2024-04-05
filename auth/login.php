@@ -1,5 +1,10 @@
 <?php
 session_start();
+
+if (isset($_SESSION["user_id"])) {
+    header("Location: ../pages/languages.php");
+}
+
 require "../includes/database.php";
 
 if (!empty($_POST["email"]) && !empty($_POST["password"])) {
@@ -14,7 +19,7 @@ if (!empty($_POST["email"]) && !empty($_POST["password"])) {
 
     if ($user && password_verify($password, $user['password'])) {
         $_SESSION["user_id"] = $user["id"];
-        header("Location: ../index.php");
+        header("Location: ../pages/languages.php");
         exit;
     } else {
         $message = "Invalid credentials";
