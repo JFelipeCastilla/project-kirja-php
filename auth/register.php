@@ -2,14 +2,17 @@
 
 session_start();
 
+// Check if a session variable called "user_id" exists
 if (isset($_SESSION["user_id"])) {
     header("Location: ../pages/languages.php");
 }
 
+// Use database
 require "../includes/database.php";
 
 $message = "";
 
+// Insert data into the database if applicable
 if (!empty($_POST["username"]) && !empty($_POST["email"]) && !empty($_POST["password"])) {
     $sql = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($sql);
@@ -35,6 +38,7 @@ if (!empty($_POST["username"]) && !empty($_POST["email"]) && !empty($_POST["pass
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../assets/css/general.css">
     <link rel="stylesheet" href="../assets/css/inputs.css">
+    <script defer src="../assets/js/fonts.js"></script>
     <title>Register</title>
 </head>
 <body>
