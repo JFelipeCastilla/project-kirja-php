@@ -42,9 +42,7 @@ $reading = "CREATE TABLE IF NOT EXISTS reading_progress (
     genre VARCHAR(100),
     start_date DATE,
     end_date DATE,
-    id_reading_wishlist INT(6) UNSIGNED,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (id_reading_wishlist) REFERENCES reading_wishlist(id_reading_wishlist)
+    FOREIGN KEY (user_id) REFERENCES users(id)
 )";
 
 // Execute queries
