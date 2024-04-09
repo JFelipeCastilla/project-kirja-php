@@ -2,31 +2,28 @@
 session_start();
 
 // Use database
-require "../includes/database.php";
+require_once "../includes/database.php";
+require_once "../includes/Manager/UserManager.php";
+
+$database = new Database("127.0.0.1", "root", "123456", "kirja");
+$conn = $database->getConnection(); // Obtiene la conexión de la base de datos
+
+$userManager = new UserManager($conn);
 
 $user = null;
 
 // Check if a session variable called "user_id" exists
 if (isset($_SESSION["user_id"])) {
-    // Select user information
-    $stmt = $conn->prepare("SELECT id, username, email, password FROM users WHERE id = ?");
-    // Prepare a SQL statement with an integer parameter
-    $stmt->bind_param("i", $_SESSION["user_id"]);
-    // Execute the prepared SQL statement
-    $stmt->execute();
-    // Get the result of the executed query
-    $result = $stmt->get_result();
-    
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-    }
+    // Get user information by ID
+    $user = $userManager->getUserById($_SESSION["user_id"]);
 }
 
-// if "user_id" no exists so redirect to dashboard
+// If "user_id" does not exist, redirect to the dashboard
 else {
     header("Location: ../index.php");
     exit();
 }
+
 ?>
 
 <?php include("../templates/header.php") ?>
@@ -44,18 +41,12 @@ else {
                 </tr>
             </thead>
             <tbody>
-                <?php 
-                    $query = "SELECT * FROM users";
-                    $users = mysqli_query($conn, $query);
-
-                    while($row = mysqli_fetch_array($users)) { ?>
-                        <tr>
-                            <td><?php echo $row["id"] ?></td>
-                            <td><?php echo $row["username"] ?></td>
-                            <td><?php echo $row["email"] ?></td>
-                            <td><?php echo $row["created_at"] ?></td>
-                        </tr>
-                <?php } ?>
+                <tr>
+                    <td><?php echo $user["id"] ?></td>
+                    <td><?php echo $user["username"] ?></td>
+                    <td><?php echo $user["email"] ?></td>
+                    <td><?php echo $user["created_at"] ?></td>
+                </tr>
             </tbody>
         </table>
     <?php endif ?>

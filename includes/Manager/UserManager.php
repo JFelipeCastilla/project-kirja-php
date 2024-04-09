@@ -29,6 +29,27 @@ class UserManager
         }
     }
 
+    public function getUserByEmailAndPassword($email, $password)
+    {
+        $sql = "SELECT * FROM users WHERE email = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows > 0) {
+            $user = $result->fetch_assoc();
+            // Verify password
+            if (password_verify($password, $user['password'])) {
+                return $user;
+            } else {
+                return null; // Incorrect password
+            }
+        } else {
+            return null; // User not found
+        }
+    }
+
     public function getUserById($userId)
     {
         $sql = "SELECT * FROM users WHERE id = ?";

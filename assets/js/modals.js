@@ -15,8 +15,12 @@ function closeModal(modalId) {
     }
 }
 
-function openEditModal(id) {
-    document.getElementById('editProgress').style.display = 'block';
-    document.getElementById('edit_id_reading_progress').value = id;
-    // Obtener detalles del progreso de lectura a través de AJAX y completar los campos del formulario de edición
+function openEditModal(id, modalType) {
+    if (modalType === 'progress') {
+        document.getElementById('editProgress').style.display = 'block';
+        document.getElementById('edit_id_reading_progress').value = id;
+    } else if (modalType === 'wishlist') {
+        document.getElementById('editPreference').style.display = 'block';
+        document.getElementById('edit_id_reading_wishlist').value = id;
+    }
 }

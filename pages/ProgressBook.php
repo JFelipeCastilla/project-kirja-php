@@ -47,10 +47,9 @@ if (isset($_SESSION["user_id"])) {
                             <td><?php echo $row["start_date"]; ?></td>
                             <td><?php echo $row["end_date"]; ?></td>
                             <td class="actions">
-                                <button class="edit-button" onclick="openEditModal(<?php echo $row["id_reading_progress"]; ?>)">Edit</button>
-                                <!-- Formulario para eliminar el progreso de lectura -->
-                                <form action="../includes/deleteProgress.php" method="POST">
-                                    <input type="hidden" name="id_reading_progress" value="<?php echo $row["id_reading_progress"]; ?>">
+                                <button class="edit-button" onclick="openEditModal(<?php echo $row["id_reading_progress"]; ?>, 'progress')">Edit</button>
+                                <form action="../includes/ProgressBook/deleteBook.php" method="POST">
+                                    <input type="hidden" name="id" value="<?php echo $row["id_reading_progress"]; ?>">
                                     <button type="submit" class="delete-button">Delete</button>
                                 </form>
                             </td>
@@ -68,7 +67,7 @@ if (isset($_SESSION["user_id"])) {
                 <h2 class="title">Create Book</h2>
                 <span class="close" onclick="closeModal('addProgress')">&times;</span>
             </div>
-            <form class="form-content" action="../includes/createProgress.php" method="POST">
+            <form class="form-content" action="../includes/ProgressBook/createBook.php" method="POST">
                 <div class="input-content">
                     <label for="book_title">Title:</label>
                     <input class="input-modal" type="text" id="book_title" name="book_title" required>

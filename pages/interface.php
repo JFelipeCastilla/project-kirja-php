@@ -41,12 +41,12 @@ if (AuthenticationManager::isAuthenticated()) {
     <div class="container">
         <div class="container-flex">
             <div class="container-icon">        
-                <a href="../pages/readingbook.php">
+                <a href="../pages/ProgressBook.php">
                     <img src="../assets/img/book.png" alt="">
                 </a>
             </div>
             <div class="container-icon">
-                <a href="../pages/preference.php">
+                <a href="../pages/WishList.php">
                     <img src="../assets/img/preference.png" alt="">
                 </a>
             </div>

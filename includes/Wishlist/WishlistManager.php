@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__. '/../Database.php';
-require_once __DIR__. '/../Methods/WishlistMethods.php';
+require_once __DIR__. '/../WishList/WishlistMethods.php';
 
 class WishlistManager
 {
