@@ -24,13 +24,3 @@
 .input:focus {
     box-shadow: 0 0 2px 1px rgb(139, 139, 139);
 }
-
-.button {
-    padding: 8px 8px;
-    background-color: rgb(86, 111, 255);
-    font-size: medium;
-    font-weight: 600;
-    border: none;
-    color: rgb(241, 241, 241);
-    border-radius: 10px;
-}

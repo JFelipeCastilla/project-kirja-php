@@ -4,7 +4,7 @@ session_start();
 
 // Check if a session variable called "user_id" exists
 if (isset($_SESSION["user_id"])) {
-    header("Location: ../pages/languages.php");
+    header("Location: ../pages/interface.php");
 }
 
 // Use database
@@ -31,17 +31,7 @@ if (!empty($_POST["username"]) && !empty($_POST["email"]) && !empty($_POST["pass
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../assets/css/general.css">
-    <link rel="stylesheet" href="../assets/css/inputs.css">
-    <script defer src="../assets/js/fonts.js"></script>
-    <title>Register</title>
-</head>
-<body>
+<?php include("../templates/header.php") ?>
     <?php if(!empty($message)): ?>
         <p><?= $message ?></p>
     <?php endif; ?>
@@ -55,5 +45,4 @@ if (!empty($_POST["username"]) && !empty($_POST["email"]) && !empty($_POST["pass
             <button class="button" type="submit">Register</button>
         </form>
     </div>
-</body>
-</html>
+<?php include("../templates/footer.php") ?>

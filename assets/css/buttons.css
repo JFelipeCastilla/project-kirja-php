@@ -1,0 +1,72 @@
+.button {
+    padding: 8px 8px;
+    background-color: #3fa2ee;
+    font-size: medium;
+    font-weight: 600;
+    border: none;
+    color: rgb(241, 241, 241);
+    cursor: pointer;
+    border-radius: 10px;
+    transition: 0.36s;
+}
+
+.button:hover {
+    opacity: 0.8;
+}
+
+.button:active {
+    opacity: 0.7;
+}
+
+.logout-button {
+    background-color: #edf7ff;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #0066ffa4;
+    font-weight: bold;
+    transition: 0.36s;
+}
+
+.logout-button:hover {  
+    opacity: 0.8;
+}
+
+.logout-button:active {
+    opacity: 0.7;
+}
+
+.edit-button {
+    color: white;
+    margin-bottom: 5px;
+    background-color: rgb(144, 125, 255);
+    border: 1px solid rgb(81, 51, 255);
+    padding: 4px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.delete-button {
+    color: white;
+    margin-bottom: 5px;
+    background-color: rgb(255, 143, 128);
+    border: 1px solid rgb(255, 60, 60);
+    padding: 4px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.update-button {
+    color: white;
+    margin-bottom: 5px;
+    background-color: rgb(37, 185, 50);
+    border: 1px solid rgb(9, 66, 14);
+    padding: 4px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
