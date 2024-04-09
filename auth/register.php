@@ -8,25 +8,20 @@ if (isset($_SESSION["user_id"])) {
 }
 
 // Use database
-require "../includes/database.php";
+require_once __DIR__ . '/../includes/Database.php';
+require_once __DIR__ . '/../includes/Manager/UserManager.php';
 
 $message = "";
 
-// Insert data into the database if applicable
-if (!empty($_POST["username"]) && !empty($_POST["email"]) && !empty($_POST["password"])) {
-    $sql = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
-    $stmt = $conn->prepare($sql);
-    
-    // Hash the password
-    $password = password_hash($_POST["password"], PASSWORD_BCRYPT);
-    
-    // Bind parameters
-    $stmt->bind_param("sss", $_POST["username"], $_POST["email"], $password);
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $database = new Database("localhost", "root", "123456", "kirja");
+    $conn = $database->getConnection();
+    $userManager = new UserManager($conn);
 
-    if ($stmt->execute()) {
-        $message = "Successfully created new user";
+    if (!empty($_POST["username"]) && !empty($_POST["email"]) && !empty($_POST["password"])) {
+        $message = $userManager->registerUser($_POST["username"], $_POST["email"], $_POST["password"]);
     } else {
-        $message = "Sorry there must have been an issue creating your account";
+        $message = "Please fill all the fields";
     }
 }
 ?>

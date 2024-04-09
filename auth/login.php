@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 
 // Check if a session variable called "user_id" exists
@@ -7,31 +8,25 @@ if (isset($_SESSION["user_id"])) {
 }
 
 // Use database
-require "../includes/database.php";
+require_once __DIR__ . '/../includes/Database.php';
+require_once __DIR__ . '/../includes/Manager/LoginManager.php';
 
-// Check if the email and password have been sent using a form
-if (!empty($_POST["email"]) && !empty($_POST["password"])) {
-    // Get the email and password sent by the form
-    $email = $_POST["email"];
-    $password = $_POST["password"];
+$message = "";
 
-    // Select user information
-    $stmt = $conn->prepare("SELECT id, email, password FROM users WHERE email=?");
-    // Prepare a SQL statement with an integer parameter
-    $stmt->bind_param("s", $email);
-    // Execute the prepared SQL statement
-    $stmt->execute();
-    // Get the result of the executed query
-    $result = $stmt->get_result();
-    // Retrieve the next row of results as an associative array
-    $user = $result->fetch_assoc();
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $database = new Database("localhost", "root", "123456", "kirja");
+    $conn = $database->getConnection();
+    $loginManager = new LoginManager($conn);
 
-    if ($user && password_verify($password, $user['password'])) {
-        $_SESSION["user_id"] = $user["id"];
-        header("Location: ../pages/interface.php");
-        exit;
+    if (!empty($_POST["email"]) && !empty($_POST["password"])) {
+        if ($loginManager->loginUser($_POST["email"], $_POST["password"])) {
+            header("Location: ../pages/interface.php");
+            exit;
+        } else {
+            $message = "Invalid credentials";
+        }
     } else {
-        $message = "Invalid credentials";
+        $message = "Please fill all the fields";
     }
 }
 ?>

@@ -1,38 +1,22 @@
 <?php
 session_start();
-// Use database
-require "../includes/database.php";
+require_once "../includes/Database.php";
+require_once "../includes/ProgressBook/ProgressManager.php";
 
-$user = null;
+// Crear una nueva instancia de Database
+$database = new Database("127.0.0.1", "root", "123456", "kirja");
 
-// Check if session is started
+// Crear una instancia de ProgressManager utilizando la base de datos
+$progressManager = new ProgressManager($database);
+
+// Verificar si la sesión está iniciada
 if (isset($_SESSION["user_id"])) {
-    // Select user information
-    $stmt = $conn->prepare("SELECT id, username, email, password FROM users WHERE id = ?");
-    // Prepare a SQL statement with an integer parameter
-    $stmt->bind_param("i", $_SESSION["user_id"]);
-    // Execute the prepared SQL statement
-    $stmt->execute();
-    // Get the result of the executed query
-    $result = $stmt->get_result();
-    
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-    }
+    // Obtener el progreso de lectura del usuario actual
+    $reading_progress_array = $progressManager->viewProgress($_SESSION["user_id"]);
+} else {
+    // Si la sesión no está iniciada, redirigir al usuario a la página de inicio de sesión o mostrar un mensaje de error
 }
 
-// SQL query to select data from reading_progress table for the current user
-$query = "SELECT * FROM reading_progress WHERE user_id = ?";
-$stmt = $conn->prepare($query);
-$stmt->bind_param("i", $_SESSION["user_id"]);
-$stmt->execute();
-$result = $stmt->get_result();
-
-// Fetch all rows from the result into an array
-$reading_progress_array = [];
-while ($row = $result->fetch_assoc()) {
-    $reading_progress_array[] = $row;
-}
 ?>
 
 <?php include("../templates/header.php") ?>
@@ -54,7 +38,6 @@ while ($row = $result->fetch_assoc()) {
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- PHP code to display reading progress data -->
                     <?php foreach ($reading_progress_array as $row) { ?>
                         <tr>
                             <td><?php echo $row["id_reading_progress"]; ?></td>
@@ -65,7 +48,8 @@ while ($row = $result->fetch_assoc()) {
                             <td><?php echo $row["end_date"]; ?></td>
                             <td class="actions">
                                 <button class="edit-button" onclick="openEditModal(<?php echo $row["id_reading_progress"]; ?>)">Edit</button>
-                                <form action="../includes/deleteProgress.php" method="POST"> <!-- Cambiado el nombre del script de eliminación -->
+                                <!-- Formulario para eliminar el progreso de lectura -->
+                                <form action="../includes/deleteProgress.php" method="POST">
                                     <input type="hidden" name="id_reading_progress" value="<?php echo $row["id_reading_progress"]; ?>">
                                     <button type="submit" class="delete-button">Delete</button>
                                 </form>
@@ -85,42 +69,6 @@ while ($row = $result->fetch_assoc()) {
                 <span class="close" onclick="closeModal('addProgress')">&times;</span>
             </div>
             <form class="form-content" action="../includes/createProgress.php" method="POST">
-                <div class="input-content">
-                    <label for="book_title">Título:</label>
-                    <input class="input-modal" type="text" id="book_title" name="book_title" required>
-                </div>
-                <div class="input-content">
-                    <label for="author">Autor:</label>
-                    <input class="input-modal" type="text" id="author" name="author" required>
-                </div>
-                <div class="input-content">
-                    <label for="genre">Género:</label>
-                    <input class="input-modal" type="text" id="genre" name="genre">
-                </div>
-                <div class="input-content">
-                    <label for="start_date">Fecha de inicio:</label>
-                    <input class="input-modal" type="date" id="start_date" name="start_date" required>
-                </div>
-                <div class="input-content">
-                    <label for="end_date">Fecha de fin:</label>
-                    <input class="input-modal" type="date" id="end_date" name="end_date" required>
-                </div>
-                <div class="input-content">
-                    <input type="submit" value="Agregar">
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal para editar progreso -->
-    <div id="modelProgress" class="modal">
-        <div class="modal-content">
-            <div class="top-content">
-                <h2 class="title">Edit Book</h2>
-                <span class="close" onclick="closeModal('modelProgress')">&times;</span>
-            </div>
-            <form class="form-content" action="../includes/editProgress.php" method="POST">
-                <input type="hidden" id="edit_id_reading_progress" name="id_reading_progress" value="">
                 <div class="input-content">
                     <label for="book_title">Title:</label>
                     <input class="input-modal" type="text" id="book_title" name="book_title" required>
@@ -142,18 +90,45 @@ while ($row = $result->fetch_assoc()) {
                     <input class="input-modal" type="date" id="end_date" name="end_date" required>
                 </div>
                 <div class="input-content">
-                    <button class="update-button" type="submit" name="update">
-                        Update
-                    </button>
+                    <button class="create-button" type="submit">Create</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <script>
-        function openEditModal(id) {
-            document.getElementById('modelProgress').style.display = 'block'
-            document.getElementById('edit_id_reading_progress').value = id;
-        }
-    </script>
+    <!-- Modal para editar progreso -->
+    <div id="editProgress" class="modal">
+        <div class="modal-content">
+            <div class="top-content">
+                <h2 class="title">Edit Book</h2>
+                <span class="close" onclick="closeModal('editProgress')">&times;</span>
+            </div>
+            <form class="form-content" action="../includes/ProgressBook/editBook.php" method="POST">
+                <input type="hidden" id="edit_id_reading_progress" name="id_reading_progress" value="">
+                <div class="input-content">
+                    <label for="edit_book_title">Title:</label>
+                    <input class="input-modal" type="text" id="edit_book_title" name="book_title" required>
+                </div>
+                <div class="input-content">
+                    <label for="edit_author">Author:</label>
+                    <input class="input-modal" type="text" id="edit_author" name="author" required>
+                </div>
+                <div class="input-content">
+                    <label for="edit_genre">Genre:</label>
+                    <input class="input-modal" type="text" id="edit_genre" name="genre">
+                </div>
+                <div class="input-content">
+                    <label for="edit_start_date">Start Date:</label>
+                    <input class="input-modal" type="date" id="edit_start_date" name="start_date" required>
+                </div>
+                <div class="input-content">
+                    <label for="edit_end_date">End Date:</label>
+                    <input class="input-modal" type="date" id="edit_end_date" name="end_date" required>
+                </div>
+                <div class="input-content">
+                    <button class="update-button" type="submit">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
 <?php include("../templates/footer.php") ?>

@@ -1,32 +1,34 @@
 <?php 
+
 session_start();
 
 // Use database
-require "../includes/database.php";
+require_once __DIR__ . '/../includes/Database.php';
+require_once __DIR__ . '/../includes/Manager/UserManager.php';
+require_once __DIR__ . '/../includes/getBookDetails.php';
+require_once __DIR__ . '/../includes/Authentication/AuthenticationManager.php';
 
 $user = null;
 
-// Check if a session variable called "user_id" exists
-if (isset($_SESSION["user_id"])) {
-    // Select user information
-    $stmt = $conn->prepare("SELECT id, username, email, password FROM users WHERE id = ?");
-    // Prepare a SQL statement with an integer parameter
-    $stmt->bind_param("i", $_SESSION["user_id"]);
-    // Execute the prepared SQL statement
-    $stmt->execute();
-    // Get the result of the executed query
-    $result = $stmt->get_result();
-    
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-    }
-}
+// Check if the user is authenticated
+if (AuthenticationManager::isAuthenticated()) {
+    $database = new Database("localhost", "root", "123456", "kirja");
+    $conn = $database->getConnection();
+    $userManager = new UserManager($conn);
 
-// if "user_id" no exists so redirect to dashboard
-else {
+    $user = $userManager->getUserById($_SESSION["user_id"]);
+
+    if (!$user) {
+        // If user doesn't exist, redirect to index
+        header("Location: ../index.php");
+        exit();
+    }
+} else {
+    // If user is not authenticated, redirect to index
     header("Location: ../index.php");
     exit();
 }
+
 ?>
 
 <?php include("../templates/header.php") ?>
